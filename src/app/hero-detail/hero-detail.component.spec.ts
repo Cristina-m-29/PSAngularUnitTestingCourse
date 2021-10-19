@@ -1,7 +1,7 @@
 import { FormsModule } from '@angular/forms';
 import { HeroService } from './../hero.service';
 import { HeroDetailComponent } from './hero-detail.component';
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from "@angular/core/testing";
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { of } from 'rxjs';
@@ -40,5 +40,30 @@ describe('HeroDetailComponent', () => {
 
     expect(fixture.nativeElement.querySelector('h2').textContent).toContain('SUPERDUDE');
   });
+
+  // async testing in general
+  // it('should call update hero when save is called', fakeAsync(() => {
+  //   mockHeroService.updateHero.and.returnValue(of({}));
+  //   fixture.detectChanges();
+
+  //   fixture.componentInstance.save();
+  //   // tick(250);
+  //   flush();
+
+  //   expect(mockHeroService.updateHero).toHaveBeenCalled();
+  // }));
+
+  // async testing for promises
+  it('should call update hero when save is called', waitForAsync(() => {
+    mockHeroService.updateHero.and.returnValue(of({}));
+    fixture.detectChanges();
+
+    fixture.componentInstance.save();
+
+    fixture.whenStable().then(() => {
+      expect(mockHeroService.updateHero).toHaveBeenCalled();
+    });
+
+  }));
 
 });
